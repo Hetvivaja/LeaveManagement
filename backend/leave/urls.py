@@ -3,11 +3,18 @@ from leave.views import(
     LeaveListView,
     LeaveDetailView,
     LeaveApprovedView,
-    LeaveRejectView
+    LeaveRejectView,
+    LoginView,
+    LogoutView
 )
 
-urlpattern=[
+urlpatterns=[
 
+    # Auth
+    path('auth/login/',LoginView.as_view(),name='login'),
+    path('auth/logout/',LogoutView.as_view(),name='logout'),
+
+    # Leaves
     # 1-Get All Leave plus new Approved Leave
     path('leaves/',LeaveListView.as_view(),name='leave-list'),
 
