@@ -26,7 +26,7 @@ class LeaveListView(APIView):
        data=service.apply_leave(request.user,request.data)
        if 'error'in data:
           return Response(data,status=status.HTTP_400_BAD_REQUEST)
-       return self.response(data,status=status.HTTP_201_CREATED)
+       return Response(data,status=status.HTTP_201_CREATED)
 
 # 2-Single Leave - Get, Approve, Reject, Delete  
 class LeaveDetailView(APIView):
@@ -83,12 +83,12 @@ class LeaveRejectView(APIView):
    def patch(self,request,leave_id):
       
       # Only reject the leave Admin
-        if not request.user.is_staff:
-          return Response(
+      if not request.user.is_staff:
+         return Response(
             {'error': 'Only admin can reject leaves!'},
             status=status.HTTP_403_FORBIDDEN
          )
-        data=service.reject_leave(leave_id)
-        return Response(data,status=status.HTTP_200_OK)
+      data=service.reject_leave(leave_id)
+      return Response(data,status=status.HTTP_200_OK)
 
     
