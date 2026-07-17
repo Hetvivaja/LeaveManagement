@@ -8,7 +8,7 @@ SIMPLE_JWT={
 }
 
 REST_FRAMEWORK={
-     'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -60,6 +60,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+
+#This is Mediater code for froned and backend
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",   # React frontend
 ]
 
 ROOT_URLCONF = 'leave_management.urls'
@@ -128,8 +134,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
-#This is Mediater code for froned and backend
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",   # React frontend
-]

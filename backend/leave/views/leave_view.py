@@ -45,9 +45,20 @@ class LeaveDetailView(APIView):
 
     # Delete Leave
    def delete(self,request,leave_id):
+      leave = service.get_leave_by_id(leave_id)
+      if not leave:
+         return Response(
+            {'error': 'Leave not found!'},
+            status=status.HTTP_404_NOT_FOUND
+         )
+      
+      # Only delete leave user only there own leave and only admin to delete all user leave.
+      if not request.user.is_staff and leave['employee']!=request.user.id:
+         return Response(
+            {'error': 'You are not authorized to delete this leave!'},
+            status=status.HTTP_403_FORBIDDEN
+         )
       data=service.delete_leave(leave_id)
-      if 'error'in data:
-         return Response(data,status=status.HTTP_404_NOT_FOUND)
       return Response(data,status=status.HTTP_200_OK)
    
 # 3-Leave Approved
