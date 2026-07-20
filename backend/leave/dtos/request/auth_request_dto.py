@@ -6,10 +6,10 @@ class LoginRequsetDTO:
     password:str
 
     @staticmethod
-    def from_requset(self):
+    def from_requset(data):
         return LoginRequsetDTO(
-            username = self.get('username', ''),
-            password = self.get('password', ''),
+            username = data.get('username', ''),
+            password = data.get('password', ''),
         )
     def validate(self):
         errors=[]
