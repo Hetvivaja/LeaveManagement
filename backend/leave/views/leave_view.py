@@ -1,3 +1,4 @@
+from leave.dtos import LeaveRequestDTO, LeaveResponseDto
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -19,14 +20,27 @@ class LeaveListView(APIView):
          data=service.get_all_leaves()
       else:
          data=service.get_employee_leaves(request.user.id)
-      return Response(data,status=status.HTTP_200_OK)
+         
+      return Response(LeaveResponseDto.leave_list_response(data),
+                      status=status.HTTP_200_OK)
     
     # Post All Leave
     def post(self,request):
+       
+       dto=LeaveRequestDTO.from_request(request.data)
+       errors=dto.validate()
+       if errors:
+          return Response(LeaveResponseDto.error(errors),
+                          status=status.HTTP_400_BAD_REQUEST)
+
        data=service.apply_leave(request.user,request.data)
+       
        if 'error'in data:
-          return Response(data,status=status.HTTP_400_BAD_REQUEST)
-       return Response(data,status=status.HTTP_201_CREATED)
+          return Response(LeaveResponseDto.error(data['error']),
+                          status=status.HTTP_400_BAD_REQUEST)
+       
+       return Response(LeaveResponseDto.success(data,'Leave Applied!'),
+                      status=status.HTTP_201_CREATED)
 
 # 2-Single Leave - Get, Approve, Reject, Delete  
 class LeaveDetailView(APIView):
