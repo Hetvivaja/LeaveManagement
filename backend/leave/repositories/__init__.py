@@ -38,7 +38,7 @@ class LeaveRepository:
             return True
         return False
     
-    def delete_leave_id(self,leave_id):
+    def delete_by_id(self,leave_id):
         try:
             Leave.objects.get(id=leave_id).delete()
             return True

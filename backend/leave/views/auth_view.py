@@ -10,7 +10,7 @@ class LoginView(APIView):
      permission_classes = [AllowAny]
      
      def post(self,request):
-          dto=LoginRequsetDTO.from_request(request.data)
+          dto=LoginRequsetDTO.from_requset(request.data)
 
           # Validate the DTO
           errors=dto.validate()

@@ -42,7 +42,7 @@ class LeaveService:
         return {'error': 'Leave not found!'}
 
     def delete_leave(self,leave_id):
-        leave=self.repo.delete_leave_id(leave_id)
+        leave=self.repo.delete_by_id(leave_id)
         if leave:
             return {'message': 'Leave deleted successfully!'}
         return {'error': 'Leave not found!'}

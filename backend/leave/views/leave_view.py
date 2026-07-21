@@ -21,13 +21,13 @@ class LeaveListView(APIView):
       else:
          data=service.get_employee_leaves(request.user.id)
          
-      return Response(LeaveResponseDTO.leave_list_response(data),
+      return Response(LeaveResponseDTO.list_response(data),
                       status=status.HTTP_200_OK)
     
     # Post All Leave
     def post(self,request):
        
-       dto=LeaveRequestDTO.from_request(request.data)
+       dto=LeaveRequestDTO.from_method(request.data)
        errors=dto.validate()
 
        if errors:
