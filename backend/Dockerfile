@@ -5,10 +5,10 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy of Requirements
-COPY requirement.txt
+COPY requirements.txt
     
 # install it
-RUN pip install --no-cache-dir -r requirement.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # all file's copy
 COPY . .
