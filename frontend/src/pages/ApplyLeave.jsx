@@ -20,7 +20,7 @@ const ApplyLeave = () => {
             const dto=createLeaveRequestDTO(formData);
             const errors=validateLeaveRequest(dto);
 
-            if(errros.length>0){
+            if(errors.length>0){
                 setError(errors.join(', '));
                 setLoading(false);
                 return;
