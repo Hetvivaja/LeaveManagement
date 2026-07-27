@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  # Backend Service
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+
+  # Frontend Service
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  # Database Service
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=leavemanagement
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

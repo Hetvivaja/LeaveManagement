@@ -1,0 +1,49 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1 - Code 
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2 - Python setup
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # Step 3 - Backend install
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+
+    # Step 4 - Node setup
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # Step 5 - Frontend install + build
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    # Step 6 - Backend deploy
+    - name: Deploy Backend
+      run: |
+        curl -X POST ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+
+    # Step 7 - Frontend deploy
+    - name: Deploy Frontend
+      run: |
+        curl -X POST ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}

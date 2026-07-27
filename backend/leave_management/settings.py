@@ -1,3 +1,6 @@
+import os
+from decouple import config
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 
@@ -20,16 +23,9 @@ REST_FRAMEWORK={
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ay6k5!5vo3aalnlxog1au2qng(k8a&#eq=w)1)2_e4(8h3y0#l'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG',default=False,cast=bool)
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -53,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,7 +62,7 @@ MIDDLEWARE = [
 
 #This is Mediater code for froned and backend
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",   # React frontend
+     "https://your-frontend.onrender.com",   # React frontend
 ]
 
 ROOT_URLCONF = 'leave_management.urls'
@@ -92,16 +89,12 @@ WSGI_APPLICATION = 'leave_management.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -134,3 +127,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
