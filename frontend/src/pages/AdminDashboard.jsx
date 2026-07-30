@@ -94,7 +94,7 @@ const AdminDashboard=()=>{
         a.download = 'leaves_report.csv';
         a.click();
     };
-};
+
 return(
            <div>
         <Navbar user={user} />
@@ -178,7 +178,7 @@ return(
         </div>
     </div>
 );
-
+};
 
 const styles={
     container   : { padding:'20px' },
