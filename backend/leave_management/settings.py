@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG',default=False,cast=bool)
+DEBUG = config('DEBUG',default=True,cast=bool)
+DATABASE_URL = config('DATABASE_URL', default='sqlite:///db.sqlite3')
 ALLOWED_HOSTS = ['*']
 
 
@@ -62,8 +63,11 @@ MIDDLEWARE = [
 
 #This is Mediater code for froned and backend
 CORS_ALLOWED_ORIGINS = [
-     "https://your-frontend.onrender.com",   # React frontend
+      "https://leave-management-frontend-sv5k.onrender.com",
+      "http://localhost:3000",
+   # React frontend
 ]
+CORS_ALLOWED_ORIGINS=True   
 
 ROOT_URLCONF = 'leave_management.urls'
 
