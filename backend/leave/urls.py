@@ -5,7 +5,10 @@ from leave.views import(
     LeaveApprovedView,
     LeaveRejectView,
     LoginView,
-    LogoutView
+    LogoutView,
+    SignupView,
+    AdminUserListView,
+    AdminUserDetailView
 )
 
 urlpatterns=[
@@ -13,6 +16,7 @@ urlpatterns=[
     # Auth
     path('auth/login/',LoginView.as_view(),name='login'),
     path('auth/logout/',LogoutView.as_view(),name='logout'),
+    path('auth/signup/',SignupView.as_view(),name='signup'),
 
     # Leaves
     # 1-Get All Leave plus new Approved Leave
@@ -26,4 +30,8 @@ urlpatterns=[
 
     # 4-Leave Reject
     path('leaves/<int:leave_id>/reject/',LeaveRejectView.as_view(),name='leave-reject'),
+
+    # Admin management
+    path('admin/users/',AdminUserListView.as_view(),name='admin_users'),
+    path('admin.users/<int:user_id>/',AdminUserDetailView.as_view(),name='admin_user_detail'),
 ]

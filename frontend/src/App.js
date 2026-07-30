@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ApplyLeave from'./pages/ApplyLeave';
 import AdminDashboard from './pages/AdminDashboard';
+import Signup from './pages/Signup';
 
 // Protected Route
 const ProtectedRoute=({children})=>{
@@ -38,6 +39,7 @@ function App(){
         <Routes>
            {/* Public */}
           <Route path="/" element={<Login/>} />
+          <Route path="/signup" element={<Signup/>}/>
 
           {/* Employee Routes */}
           <Route path="/dashboard" element={

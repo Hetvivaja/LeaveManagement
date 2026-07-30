@@ -4,4 +4,10 @@ from .leave_view import(
     LeaveApprovedView,
     LeaveRejectView
 )
-from .auth_view import LoginView,LogoutView
+from .auth_view import (
+    LoginView,
+    LogoutView,
+    SignupView,
+    AdminUserListView,
+    AdminUserDetailView
+)

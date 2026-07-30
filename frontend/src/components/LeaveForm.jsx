@@ -64,7 +64,7 @@ const LeaveForm=({onSubmit,loading})=>{
             <textarea
                 style={styles.textarea}
                 name="reason"
-                placeholder="Leave ka reason likho..."
+                placeholder="Leave for reason write..."
                 onChange={handleChange}
             />
 

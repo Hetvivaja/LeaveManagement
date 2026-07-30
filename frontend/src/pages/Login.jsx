@@ -1,5 +1,6 @@
 import React,{useState} from "react";
 import {useNavigate} from 'react-router-dom';
+import {useNavigate,Link} from 'react-router-dom';
 import {loginAPI} from '../services/api';
 // import { createLoginRequestDTO, validateLoginRequest } from '../dtos/request/authRequestDTO';
 // import { parseLoginResponse } from '../dtos/response/authResponseDTO';
@@ -78,6 +79,11 @@ const Login=()=>{
                 >
                     {loading ? 'Logging in...' : 'Login'}
                 </button>
+                <p style={styles.signupText}>
+                    New user?{' '}
+                    <Link to="/signup" style={styles.link}>Create account</Link>
+                </p>
+                
             </div>
         </div>
     );
@@ -90,5 +96,7 @@ const styles={
     input     : { width:'100%', padding:'10px', marginBottom:'15px', borderRadius:'5px', border:'1px solid #ddd', fontSize:'14px', boxSizing:'border-box' },
     button    : { width:'100%', padding:'10px', backgroundColor:'#1890ff', color:'white', border:'none', borderRadius:'5px', fontSize:'16px', cursor:'pointer' },
     error     : { color:'red', textAlign:'center', marginBottom:'10px' },
+    signupText : { textAlign:'center', color:'#666', fontSize:'14px', marginTop:'15px' },
+    link       : { color:'#1890ff', textDecoration:'none' },
 };
 export default Login;
