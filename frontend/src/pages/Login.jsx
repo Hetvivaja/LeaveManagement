@@ -50,6 +50,13 @@ const Login=()=>{
     return(
          <div style={styles.container}>
             <div style={styles.box}>
+                 <div style={styles.logoContainer}>
+                    <img
+                        src="/hetvi_logo.png"
+                        alt="Logo"
+                        style={styles.logoImg}
+                    />
+                </div>
                 <h2 style={styles.title}>Leave Management</h2>
                 <h3 style={styles.subtitle}>Login</h3>
 
@@ -97,5 +104,7 @@ const styles={
     error     : { color:'red', textAlign:'center', marginBottom:'10px' },
     signupText : { textAlign:'center', color:'#666', fontSize:'14px', marginTop:'15px' },
     link       : { color:'#1890ff', textDecoration:'none' },
+    logoContainer : { display:'flex', justifyContent:'center', marginBottom:'10px' },
+    logoImg       : { width:'80px', height:'80px', borderRadius:'15px', objectFit:'cover' },
 };
 export default Login;

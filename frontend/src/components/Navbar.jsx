@@ -15,7 +15,14 @@ const Navbar=({user})=>{
     
     return(
         <nav style={styles.nav}>
-            <h2 style={styles.logo}>🏢 Leave Management</h2>
+             <div style={styles.logoContainer}>
+                <img
+                    src="/hetvi_logo.png"  
+                    alt="Logo"
+                    style={styles.logoImg}
+                />
+                <h2 style={styles.logoText}>🏢Leave Management</h2>
+            </div>
             <div style={styles.right}>
                 <span style={styles.username}>👤 {user?.username}</span>
                 <button style={styles.logoutBtn} onClick={handleLogout}>Logout</button>
@@ -24,12 +31,13 @@ const Navbar=({user})=>{
     );
 };
 
-const styles={
-    nav       : { display:'flex', justifyContent:'space-between', alignItems:'center', padding:'15px 30px', background:'#1890ff', color:'white' },
-    logo      : { margin:0, color:'white' },
-    right     : { display:'flex', alignItems:'center', gap:'15px' },
-    username  : { color:'white', fontSize:'14px' },
-    logoutBtn : { padding:'5px 10px', background:'#ff4d4f', color:'white', border:'none', borderRadius:'4px', cursor:'pointer' },    
+const styles = {
+    nav           : { display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 30px', background:'#1890ff', color:'white' },
+    logoContainer : { display:'flex', alignItems:'center', gap:'10px' },
+    logoImg       : { width:'40px', height:'40px', borderRadius:'8px', objectFit:'cover' },
+    logoText      : { margin:'0', color:'white', fontSize:'20px' },
+    right         : { display:'flex', alignItems:'center', gap:'15px' },
+    username      : { color:'white', fontSize:'14px' },
+    logoutBtn     : { padding:'8px 15px', background:'white', color:'#1890ff', border:'none', borderRadius:'5px', cursor:'pointer' },
 };
-
 export default Navbar;
