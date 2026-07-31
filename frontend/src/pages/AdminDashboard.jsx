@@ -18,9 +18,6 @@ const AdminDashboard=()=>{
     const [users,     setUsers]     = useState([]); 
 
 
-    useEffect(()=>{fetchLeaves();
-        fetchUsers},[]);
-
     const fetchLeaves=async()=>{
         try{
             const res=await getLeavesAPI();
@@ -56,6 +53,10 @@ const AdminDashboard=()=>{
         }
     };
 
+    
+    useEffect(()=>{fetchLeaves();
+        fetchUsers},[]);
+        
     const handlePasswordChange = async (id, password) => {
         await updateUserAPI(id, { password });
         alert('Password updated!');
