@@ -14,6 +14,10 @@ const AdminDashboard=()=>{
     const [search,  setSearch]  = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
 
+    const [activeTab, setActiveTab] = useState('leaves'); 
+    const [users,     setUsers]     = useState([]); 
+
+
     useEffect(()=>{fetchLeaves();
         fetchUsers},[]);
 
@@ -42,9 +46,6 @@ const AdminDashboard=()=>{
         await deleteLeaveAPI(id);
         fetchLeaves();
     };
-
-    const [activeTab, setActiveTab] = useState('leaves'); 
-    const [users,     setUsers]     = useState([]); 
 
     const fetchUsers = async () => {
         try {
