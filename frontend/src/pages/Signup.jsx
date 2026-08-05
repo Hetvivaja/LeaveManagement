@@ -13,7 +13,7 @@ const Signup = () => {
         first_name : '',
         last_name  : '',
     });
-    const [error,   setError]   = useState('');
+    const [error,   setErrors   ]   = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
