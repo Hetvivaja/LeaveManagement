@@ -4,6 +4,8 @@ import { applyLeaveAPI } from '../services/api';
 import Navbar from '../components/Navbar';
 import LeaveForm from '../components/LeaveForm';
 import { createLeaveRequestDTO, validateLeaveRequest } from '../dtos/request/leaveRequestDTO';
+import ErrorAlert from '../components/ErrorAlert';
+import SuccessAlert from '../components/SuccessAlert';
 
 const ApplyLeave = () => {
         const navigate=useNavigate();
@@ -59,6 +61,8 @@ const ApplyLeave = () => {
                     Cancel
                 </button>
             </div>
+            <ErrorAlert   errors={errors}     />
+            <SuccessAlert message={success}   />            
         </div>     
     );
 };

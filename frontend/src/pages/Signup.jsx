@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signupAPI } from '../services/api';
+import ErrorAlert from '../components/ErrorAlert';
+import SuccessAlert from '../components/SuccessAlert';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -19,6 +21,21 @@ const Signup = () => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+     // Frontend Validation
+    const validate = () => {
+        const errs = [];
+        if (!form.first_name) errs.push('First name is required!');
+        if (!form.last_name)  errs.push('Last name is required!');
+        if (!form.username)   errs.push('Username is required!');
+        if (!form.email)      errs.push('Email is required!');
+        if (!form.password)   errs.push('Password is required!');
+        if (form.password && form.password.length < 8)
+            errs.push('Password must be at least 8 characters!');
+        if (form.email && !form.email.includes('@'))
+            errs.push('Valid email is required!');
+        return errs;
+    };
+
     const handleSubmit = async () => {
         setError('');
         setLoading(true);
@@ -30,7 +47,14 @@ const Signup = () => {
             setSuccess('Account created! Redirecting...');
             setTimeout(() => navigate('/dashboard'), 1500);
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong!');
+            const backendError = err.response?.data?.message;
+            if (Array.isArray(backendError)) {
+                setErrors(backendError);
+            } else if (backendError) {
+                setErrors([backendError]);
+            } else {
+                setErrors(['Something went wrong! Please try again.']);
+            }
         } finally {
             setLoading(false);
         }
@@ -39,11 +63,11 @@ const Signup = () => {
     return (
         <div style={styles.container}>
             <div style={styles.box}>
-                <h2 style={styles.title}>🏢 Leave Management</h2>
+                <h2 style={styles.title}>Leave Management</h2>
                 <h3 style={styles.subtitle}>Create Account</h3>
 
-                {error   && <p style={styles.error}>{error}</p>}
-                {success && <p style={styles.success}>{success}</p>}
+                <ErrorAlert errors={errors} />
+                <SuccessAlert message={success} />
 
                 <input style={styles.input} type="text"     name="first_name" placeholder="First Name *"  onChange={handleChange} />
                 <input style={styles.input} type="text"     name="last_name"  placeholder="Last Name"     onChange={handleChange} />

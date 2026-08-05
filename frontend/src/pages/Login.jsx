@@ -3,6 +3,7 @@ import {useNavigate,Link} from 'react-router-dom';
 import {loginAPI} from '../services/api';
 // import { createLoginRequestDTO, validateLoginRequest } from '../dtos/request/authRequestDTO';
 // import { parseLoginResponse } from '../dtos/response/authResponseDTO';
+import ErrorAlert from '../components/ErrorAlert'; 
 
 const Login=()=>{
     const navigate=useNavigate();
@@ -89,7 +90,7 @@ const Login=()=>{
                     New user?{' '}
                     <Link to="/signup" style={styles.link}>Create account</Link>
                 </p>
-                
+                <ErrorAlert errors={error} />
             </div>
         </div>
     );
