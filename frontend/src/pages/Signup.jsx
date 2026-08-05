@@ -37,8 +37,15 @@ const Signup = () => {
     };
 
     const handleSubmit = async () => {
-        setError('');
+        setErrors([]);
+        setSuccess('');
+        const validationErrors = validate();
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
         setLoading(true);
+
         try {
             const res = await signupAPI(form);
             localStorage.setItem('access_token',  res.data.access_token);
