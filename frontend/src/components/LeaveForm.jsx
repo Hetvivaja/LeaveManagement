@@ -27,7 +27,6 @@ const LeaveForm=({onSubmit,loading})=>{
     return(
          <div style={styles.container}>
 
-            {/* Leave Type */}
             <label style={styles.label}>Leave Type</label>
             <select
                 name="leave_type"
@@ -41,7 +40,6 @@ const LeaveForm=({onSubmit,loading})=>{
                 <option value="maternity">Maternity Leave</option>
             </select>
 
-            {/* Start Date */}
             <label style={styles.label}>Start Date</label>
             <input
                 style={styles.input}
@@ -50,7 +48,6 @@ const LeaveForm=({onSubmit,loading})=>{
                 onChange={handleChange}
             />
 
-            {/* End Date */}
             <label style={styles.label}>End Date</label>
             <input
                 style={styles.input}
@@ -59,7 +56,6 @@ const LeaveForm=({onSubmit,loading})=>{
                 onChange={handleChange}
             />
 
-            {/* Reason */}
             <label style={styles.label}>Reason</label>
             <textarea
                 style={styles.textarea}
@@ -68,7 +64,6 @@ const LeaveForm=({onSubmit,loading})=>{
                 onChange={handleChange}
             />
 
-            {/* Submit Button */}
             <button
                 style={styles.button}
                 onClick={handleSubmit}

@@ -9,8 +9,8 @@ const AdminUserList = ({ users, onPasswordChange, onDelete, onToggleActive }) =>
     }
 
     return (
-        <div>
-            <table style={styles.table}>
+        <div className="table-scroll">
+            <table style={styles.table} className="data-table">
                 <thead>
                     <tr style={styles.thead}>
                         <th>ID</th>
@@ -46,7 +46,6 @@ const AdminUserList = ({ users, onPasswordChange, onDelete, onToggleActive }) =>
                                 </span>
                             </td>
                             <td>
-                                {/* Password Change */}
                                 {editId === user.id ? (
                                     <div style={styles.passEdit}>
                                         <input

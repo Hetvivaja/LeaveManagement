@@ -9,7 +9,7 @@ const AdminStats = ({leaves}) => {
         rejected : leaves.filter(l => l.status === 'rejected').length,
     };
      return (
-        <div style={styles.container}>
+        <div style={styles.container} className="stat-grid">
             <div style={{...styles.card, borderTop:'4px solid #1890ff'}}>
                 <h3 style={styles.number}>{stats.total}</h3>
                 <p style={styles.label}>📋 Total Leaves</p>

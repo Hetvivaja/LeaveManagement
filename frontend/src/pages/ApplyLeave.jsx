@@ -42,13 +42,12 @@ const ApplyLeave = () => {
     return(
         <div>
             <Navbar user={user} />
-            <div style={styles.container}>
+            <main style={styles.container} className="form-page">
                 <h2>Apply for Leave</h2>
 
                 {error   && <p style={styles.error}>{error}</p>}
                 {success && <p style={styles.success}>{success}</p>}
 
-                {/* LeaveForm Component use karo */}
                 <LeaveForm
                     onSubmit={handleSubmit}
                     loading={loading}
@@ -60,8 +59,8 @@ const ApplyLeave = () => {
                 >
                     Cancel
                 </button>
-            </div>
-            <ErrorAlert   errors={errors}     />
+            </main>
+            <ErrorAlert   errors={error}      />
             <SuccessAlert message={success}   />            
         </div>     
     );

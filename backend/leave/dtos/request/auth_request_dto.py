@@ -22,10 +22,11 @@ class LoginRequsetDTO:
 @dataclass
 class SignupRequestDto:
     username:str
-    passwork:str
+    password:str
     email:str
     first_name:str
     last_name:str
+    department:str
 
     @staticmethod
     def from_request(data):
@@ -35,6 +36,7 @@ class SignupRequestDto:
             email      = data.get('email',      ''),
             first_name = data.get('first_name', ''),
             last_name  = data.get('last_name',  ''),
+            department = data.get('department', '').strip(),
         )
     def validate(self):
         errors=[]
@@ -48,4 +50,7 @@ class SignupRequestDto:
             errors.append('Email is required!')
         if not self.first_name:
             errors.append('First name is required!')
+        valid_departments = {'engineering', 'human_resources', 'finance', 'marketing', 'operations', 'sales'}
+        if self.department not in valid_departments:
+            errors.append('Please select a valid department!')
         return errors

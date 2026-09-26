@@ -1,111 +1,57 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signupAPI } from '../services/api';
-import ErrorAlert from '../components/ErrorAlert';
-import SuccessAlert from '../components/SuccessAlert';
+
+const departments = [['engineering', 'Engineering'], ['human_resources', 'Human Resources'], ['finance', 'Finance'], ['marketing', 'Marketing'], ['operations', 'Operations'], ['sales', 'Sales']];
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({
-        username   : '',
-        password   : '',
-        email      : '',
-        first_name : '',
-        last_name  : '',
-    });
-    const [error,   setErrors   ]   = useState('');
-    const [success, setSuccess] = useState('');
+    const [form, setForm] = useState({ first_name: '', last_name: '', username: '', email: '', password: '', department: '' });
+    const [errors, setErrors] = useState({});
+    const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-     // Frontend Validation
+    const handleChange = ({ target: { name, value } }) => { setForm((current) => ({ ...current, [name]: value })); setErrors((current) => ({ ...current, [name]: '' })); };
     const validate = () => {
-        const errs = [];
-        if (!form.first_name) errs.push('First name is required!');
-        if (!form.last_name)  errs.push('Last name is required!');
-        if (!form.username)   errs.push('Username is required!');
-        if (!form.email)      errs.push('Email is required!');
-        if (!form.password)   errs.push('Password is required!');
-        if (form.password && form.password.length < 8)
-            errs.push('Password must be at least 8 characters!');
-        if (form.email && !form.email.includes('@'))
-            errs.push('Valid email is required!');
-        return errs;
+        const nextErrors = {};
+        if (!form.first_name.trim()) nextErrors.first_name = 'First name is required.';
+        if (!form.username.trim()) nextErrors.username = 'Username is required.';
+        else if (form.username.trim().length < 3) nextErrors.username = 'Use at least 3 characters.';
+        if (!form.email.trim()) nextErrors.email = 'Email is required.';
+        else if (!/^\S+@\S+\.\S+$/.test(form.email)) nextErrors.email = 'Enter a valid email address.';
+        if (!form.password) nextErrors.password = 'Password is required.';
+        else if (form.password.length < 8) nextErrors.password = 'Use at least 8 characters.';
+        if (!form.department) nextErrors.department = 'Select your department.';
+        return nextErrors;
     };
-
-    const handleSubmit = async () => {
-        setErrors([]);
-        setSuccess('');
-        const validationErrors = validate();
-        if (validationErrors.length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-        setLoading(true);
-
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const nextErrors = validate();
+        if (Object.keys(nextErrors).length) return setErrors(nextErrors);
+        setLoading(true); setServerError('');
         try {
-            const res = await signupAPI(form);
-            localStorage.setItem('access_token',  res.data.access_token);
-            localStorage.setItem('refresh_token', res.data.refresh_token);
-            localStorage.setItem('user',          JSON.stringify(res.data.user));
-            setSuccess('Account created! Redirecting...');
-            setTimeout(() => navigate('/dashboard'), 1500);
-        } catch (err) {
-            const backendError = err.response?.data?.message;
-            if (Array.isArray(backendError)) {
-                setErrors(backendError);
-            } else if (backendError) {
-                setErrors([backendError]);
-            } else {
-                setErrors(['Something went wrong! Please try again.']);
-            }
-        } finally {
-            setLoading(false);
-        }
+            const { data } = await signupAPI({ ...form, username: form.username.trim(), email: form.email.trim() });
+            localStorage.setItem('access_token', data.access_token); localStorage.setItem('refresh_token', data.refresh_token); localStorage.setItem('user', JSON.stringify(data.user));
+            navigate('/dashboard', { replace: true });
+        } catch (error) {
+            const message = error.response?.data?.message;
+            setServerError(Array.isArray(message) ? message.join(' ') : message || 'We could not create your account. Please try again.');
+        } finally { setLoading(false); }
     };
+    const field = (name, label, options = {}) => <div className={options.full ? 'col-12' : 'col-sm-6'}><label className="form-label fw-semibold" htmlFor={name}>{label}{options.optional && <span className="text-secondary fw-normal"> (optional)</span>}</label><input id={name} name={name} type={options.type || 'text'} value={form[name]} onChange={handleChange} className={`form-control ${errors[name] ? 'is-invalid' : ''}`} autoComplete={options.autoComplete} /><div className="invalid-feedback">{errors[name]}</div>{options.hint && <div className="form-text">{options.hint}</div>}</div>;
 
-    return (
-        <div style={styles.container}>
-            <div style={styles.box}>
-                <h2 style={styles.title}>Leave Management</h2>
-                <h3 style={styles.subtitle}>Create Account</h3>
-
-                <ErrorAlert errors={errors} />
-                <SuccessAlert message={success} />
-
-                <input style={styles.input} type="text"     name="first_name" placeholder="First Name *"  onChange={handleChange} />
-                <input style={styles.input} type="text"     name="last_name"  placeholder="Last Name"     onChange={handleChange} />
-                <input style={styles.input} type="text"     name="username"   placeholder="Username *"    onChange={handleChange} />
-                <input style={styles.input} type="email"    name="email"      placeholder="Email *"       onChange={handleChange} />
-                <input style={styles.input} type="password" name="password"   placeholder="Password * (min 8 chars)" onChange={handleChange} />
-
-                <button style={styles.button} onClick={handleSubmit} disabled={loading}>
-                    {loading ? 'Creating...' : 'Create Account'}
-                </button>
-
-                <p style={styles.loginText}>
-                    Already have account?{' '}
-                    <Link to="/" style={styles.link}>Login here</Link>
-                </p>
-            </div>
-        </div>
-    );
-};
-
-const styles = {
-    container : { display:'flex', justifyContent:'center', alignItems:'center', height:'100vh', background:'#f0f2f5' },
-    box       : { background:'white', padding:'40px', borderRadius:'10px', width:'380px', boxShadow:'0 2px 10px rgba(0,0,0,0.1)' },
-    title     : { textAlign:'center', color:'#1890ff', marginBottom:'5px' },
-    subtitle  : { textAlign:'center', color:'#666', marginBottom:'20px' },
-    input     : { width:'100%', padding:'10px', marginBottom:'12px', borderRadius:'5px', border:'1px solid #ddd', fontSize:'14px', boxSizing:'border-box' },
-    button    : { width:'100%', padding:'10px', background:'#1890ff', color:'white', border:'none', borderRadius:'5px', fontSize:'16px', cursor:'pointer', marginBottom:'15px' },
-    error     : { color:'red',   textAlign:'center', marginBottom:'10px' },
-    success   : { color:'green', textAlign:'center', marginBottom:'10px' },
-    loginText : { textAlign:'center', color:'#666', fontSize:'14px' },
-    link      : { color:'#1890ff', textDecoration:'none' },
+    return <main className="auth-page auth-page--signup"><section className="auth-card auth-card--wide card border-0">
+        <div className="text-center mb-4"><img src="/hetvi_logo.png" alt="Leave Management" className="auth-logo mb-3" /><p className="eyebrow mb-2">GET STARTED</p><h1 className="h3 fw-bold mb-2">Create your account</h1><p className="text-secondary mb-0">Set up your employee workspace in under a minute.</p></div>
+        {serverError && <div className="alert alert-danger py-2" role="alert">{serverError}</div>}
+        <form onSubmit={handleSubmit} noValidate><div className="row g-3">
+            {field('first_name', 'First name', { autoComplete: 'given-name' })}
+            {field('last_name', 'Last name', { optional: true, autoComplete: 'family-name' })}
+            {field('username', 'Username', { autoComplete: 'username' })}
+            <div className="col-sm-6"><label className="form-label fw-semibold" htmlFor="department">Department</label><select id="department" name="department" value={form.department} onChange={handleChange} className={`form-select ${errors.department ? 'is-invalid' : ''}`}><option value="">Choose a department</option>{departments.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><div className="invalid-feedback">{errors.department}</div></div>
+            {field('email', 'Work email', { type: 'email', full: true, autoComplete: 'email' })}
+            {field('password', 'Password', { type: 'password', full: true, autoComplete: 'new-password', hint: 'At least 8 characters.' })}
+        </div><button className="btn btn-primary btn-lg w-100 auth-submit mt-4" type="submit" disabled={loading}>{loading ? 'Creating account…' : 'Create account'}</button></form>
+        <p className="text-center text-secondary mt-4 mb-0">Already have an account? <Link className="fw-semibold text-decoration-none" to="/">Sign in</Link></p>
+    </section></main>;
 };
 
 export default Signup;

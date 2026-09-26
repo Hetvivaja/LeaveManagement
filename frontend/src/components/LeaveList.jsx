@@ -11,7 +11,7 @@ const  LeaveList=({leaves, isAdmin, onApprove, onReject,currentUserId, onDelete}
         return<p>No leaves  fount!</p>;
     }
     return(
-         <table style={styles.table}>
+         <div className="table-scroll"><table style={styles.table} className="data-table">
             <thead>
                 <tr style={styles.thead}>
                     <th>Employee</th>
@@ -55,7 +55,7 @@ const  LeaveList=({leaves, isAdmin, onApprove, onReject,currentUserId, onDelete}
                     </tr>
                 ))}
             </tbody>
-        </table>
+         </table></div>
     );
 };
 

@@ -21,7 +21,6 @@ class LeaveService:
         return None
     
     def apply_leave(self,employee,data):
-        # Business Rule: Start date end date se pehle honi chahiye
         if data['start_date']>data['end_date']:
             return{
                 'error': 'Start date cannot be after end date!'

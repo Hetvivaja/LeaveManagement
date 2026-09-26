@@ -1,9 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+class EmployeeProfile(models.Model):
+    DEPARTMENTS = [
+        ('engineering', 'Engineering'),
+        ('human_resources', 'Human Resources'),
+        ('finance', 'Finance'),
+        ('marketing', 'Marketing'),
+        ('operations', 'Operations'),
+        ('sales', 'Sales'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    department = models.CharField(max_length=32, choices=DEPARTMENTS)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.get_department_display()}'
+
 class Leave(models.Model):
 
-    #Leave Type
     LEAVE_TYPE_CHOICE=[
         ('casual','Casual Leave'),
         ('sick','Sick Leave'),
@@ -11,14 +27,12 @@ class Leave(models.Model):
         ('maternity','Maternity Leave'),
     ]
 
-    #Status Choice
     STATUS_CHOICE=[
         ('pending',"Pending"),
         ('approved','Approved'),
         ('rejected','Rejected'),
     ]
 
-    #Fields
     employee=models.ForeignKey(User,on_delete=models.CASCADE,related_name='leaves')
     leave_type=models.CharField(max_length=20,choices=LEAVE_TYPE_CHOICE)
     start_date=models.DateField()

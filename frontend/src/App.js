@@ -6,14 +6,6 @@ import ApplyLeave from'./pages/ApplyLeave';
 import AdminDashboard from './pages/AdminDashboard';
 import Signup from './pages/Signup';
 
-// Protected Route
-const ProtectedRoute=({children})=>{
-
-    const token=localStorage.getItem('access_token');
-    return token?children:<Navigate to="/" />;
-};
-
-// Admin Only Route
 const AdminRoute=({children})=>{
 
   const token=localStorage.getItem('access_token');
@@ -23,7 +15,6 @@ const AdminRoute=({children})=>{
   return children;
 };
 
-// Employee Only Route
 const EmployeeRoute=({children})=>{
 
   const token=localStorage.getItem('access_token');
@@ -37,11 +28,9 @@ function App(){
     return(
       <BrowserRouter>
         <Routes>
-           {/* Public */}
           <Route path="/" element={<Login/>} />
           <Route path="/signup" element={<Signup/>}/>
 
-          {/* Employee Routes */}
           <Route path="/dashboard" element={
             <EmployeeRoute><Dashboard/></EmployeeRoute>
           } />
@@ -49,7 +38,6 @@ function App(){
             <EmployeeRoute><ApplyLeave /></EmployeeRoute>
           }/>
 
-           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={
             <AdminRoute><AdminDashboard/></AdminRoute>
           } />

@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from leave.models import EmployeeProfile
 from leave.dtos import LoginRequsetDTO, AuthResponseDTO,SignupRequestDto
 
 class LoginView(APIView):
@@ -13,21 +14,18 @@ class LoginView(APIView):
      def post(self,request):
           dto=LoginRequsetDTO.from_requset(request.data)
 
-          # Validate the DTO
           errors=dto.validate()
           if errors:
                return Response(
                     {'success': False,'message': errors},
                      status=status.HTTP_400_BAD_REQUEST)    
 
-          # User Checked
           user=authenticate(username=dto.username,password=dto.password)
           if user is None:
                return Response(
                     AuthResponseDTO.login_error(),
                     status=status.HTTP_401_UNAUTHORIZED
                )
-          # To create Token
           refresh=RefreshToken.for_user(user)
           return Response(
                AuthResponseDTO.login_success(user, str(refresh.access_token), str(refresh)),
@@ -64,40 +62,32 @@ class SignupView(APIView):
                     {'success': False, 'message': errors},
                     status=status.HTTP_400_BAD_REQUEST
                )
-          # Check username already exists
           if User.objects.filter(username=dto.username).exists():
                return Response(
                     {'success': False, 'message': 'Username already exists!'},
                     status=status.HTTP_400_BAD_REQUEST
                     )
-           # Check email already exists
           if User.objects.filter(email=dto.email).exists():
-            return Response(
-                {'success': False, 'message': 'Email already exists!'},
-                status=status.HTTP_400_BAD_REQUEST
+               return Response(
+                   {'success': False, 'message': 'Email already exists!'},
+                   status=status.HTTP_400_BAD_REQUEST
                )
-          # Create User
-            user = User.objects.create_user(
-            username   = dto.username,
-            password   = dto.password,
-            email      = dto.email,
-            first_name = dto.first_name,
-            last_name  = dto.last_name,
+          user = User.objects.create_user(
+              username=dto.username,
+              password=dto.password,
+              email=dto.email,
+              first_name=dto.first_name,
+              last_name=dto.last_name,
           )
-            # Create Token
-            refresh=RefreshToken.for_user(user)
-            return Response({
-                    'success'       : True,
-                    'message'       : 'Account created successfully!',
-                    'access_token'  : str(refresh.access_token),
-                    'refresh_token' : str(refresh),
-                    'user': {
-                    'id'       : user.id,
-                    'username' : user.username,
-                    'email'    : user.email,
-                    'is_admin' : user.is_staff,
-                    }
-            },status=status.HTTP_201_CREATED)
+          EmployeeProfile.objects.create(user=user, department=dto.department)
+          refresh=RefreshToken.for_user(user)
+          return Response({
+              'success': True,
+              'message': 'Account created successfully!',
+              'access_token': str(refresh.access_token),
+              'refresh_token': str(refresh),
+              'user': AuthResponseDTO.user_data(user)
+          }, status=status.HTTP_201_CREATED)
 
 class AdminUserListView(APIView):
      
@@ -132,6 +122,8 @@ class AdminUserDetailView(APIView):
             )
            try:
                user        = User.objects.get(id=user_id)
+               if user == request.user and (request.data.get('is_active') is False or request.data.get('is_staff') is False):
+                    return Response({'error': 'You cannot remove your own admin access.'}, status=status.HTTP_400_BAD_REQUEST)
                new_password = request.data.get('password')
                is_active    = request.data.get('is_active')
                is_staff     = request.data.get('is_staff')
@@ -161,6 +153,8 @@ class AdminUserDetailView(APIView):
             )
          try:
             user = User.objects.get(id=user_id)
+            if user == request.user:
+                return Response({'error': 'You cannot delete your own account.'}, status=status.HTTP_400_BAD_REQUEST)
             user.delete()
             return Response({
                 'success': True,

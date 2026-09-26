@@ -5,7 +5,7 @@ const FILTERS=['all', 'pending', 'approved', 'rejected'];
 const AdminFilter=({current,onChange})=>{
 
      return (
-        <div style={styles.container}>
+        <div style={styles.container} className="filter-controls">
             <span style={styles.label}>🔍 Filter:</span>
             {FILTERS.map((f) => (
                 <button

@@ -1,111 +1,51 @@
-import React,{useState} from "react";
-import {useNavigate,Link} from 'react-router-dom';
-import {loginAPI} from '../services/api';
-// import { createLoginRequestDTO, validateLoginRequest } from '../dtos/request/authRequestDTO';
-// import { parseLoginResponse } from '../dtos/response/authResponseDTO';
-import ErrorAlert from '../components/ErrorAlert'; 
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginAPI } from '../services/api';
 
-const Login=()=>{
-    const navigate=useNavigate();
-    const[form,setForm]=useState({username:'',password:''});
-    const [error,setError]=useState('');
-    const [loading,setLoading]=useState(false);
+const Login = () => {
+    const navigate = useNavigate();
+    const [form, setForm] = useState({ username: '', password: '' });
+    const [errors, setErrors] = useState({});
+    const [serverError, setServerError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleChange=(e)=>{
-        setForm({...form,[e.target.name]:e.target.value});
+    const handleChange = ({ target: { name, value } }) => {
+        setForm((current) => ({ ...current, [name]: value }));
+        setErrors((current) => ({ ...current, [name]: '' }));
     };
 
-    const handleSubmit=async(e)=>{
-        if(e)e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const nextErrors = {};
+        if (!form.username.trim()) nextErrors.username = 'Username is required.';
+        if (!form.password) nextErrors.password = 'Password is required.';
+        if (Object.keys(nextErrors).length) return setErrors(nextErrors);
         setLoading(true);
-        setError('');
-
-        try{
-            const res = await loginAPI({
-            username: form.username,
-            password: form.password,
-            });
-
-            // Direct response - DTO skip 
-            const { access_token, refresh_token, user } = res.data;
-
-            // Token Save
-            localStorage.setItem('access_token',access_token);
-            localStorage.setItem('refresh_token', refresh_token);
-            localStorage.setItem('user', JSON.stringify(user));
-
-            // Auto Ridirect Role wise
-            if(user.is_admin){
-                navigate('/admin/dashboard');}
-            else{
-                navigate('/dashboard');
-            }
-            
-        }catch(err){
-            setError('Invalid username or password!');
-        }finally{
+        setServerError('');
+        try {
+            const { data } = await loginAPI(form);
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            navigate(data.user.is_admin ? '/admin/dashboard' : '/dashboard', { replace: true });
+        } catch (error) {
+            const message = error.response?.data?.message;
+            setServerError(Array.isArray(message) ? message.join(' ') : message || 'Unable to sign in. Check your username and password.');
+        } finally {
             setLoading(false);
         }
     };
 
-    return(
-         <div style={styles.container}>
-            <div style={styles.box}>
-                 <div style={styles.logoContainer}>
-                    <img
-                        src="/hetvi_logo.png"
-                        alt="Logo"
-                        style={styles.logoImg}
-                    />
-                </div>
-                <h2 style={styles.title}>Leave Management</h2>
-                <h3 style={styles.subtitle}>Login</h3>
-
-                {error && <p style={styles.error}>{error}</p>}
-
-                <input
-                    style={styles.input}
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    value={form.username}
-                    onChange={handleChange}
-                />
-                <input
-                    style={styles.input}
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={form.password}
-                    onChange={handleChange}
-                />
-                <button
-                    style={styles.button}
-                    onClick={handleSubmit}
-                    disabled={loading}
-                >
-                    {loading ? 'Logging in...' : 'Login'}
-                </button>
-                <p style={styles.signupText}>
-                    New user?{' '}
-                    <Link to="/signup" style={styles.link}>Create account</Link>
-                </p>
-                <ErrorAlert errors={error} />
-            </div>
-        </div>
-    );
+    return <main className="auth-page auth-page--login"><section className="auth-card card border-0">
+        <div className="text-center mb-4"><img src="/hetvi_logo.png" alt="Leave Management" className="auth-logo mb-3" /><p className="eyebrow mb-2">WELCOME BACK</p><h1 className="h3 fw-bold mb-2">Sign in to your workspace</h1><p className="text-secondary mb-0">Manage your leave requests in one place.</p></div>
+        {serverError && <div className="alert alert-danger py-2" role="alert">{serverError}</div>}
+        <form onSubmit={handleSubmit} noValidate>
+            <div className="mb-3"><label className="form-label fw-semibold" htmlFor="username">Username</label><input id="username" name="username" value={form.username} onChange={handleChange} className={`form-control form-control-lg ${errors.username ? 'is-invalid' : ''}`} autoComplete="username" /><div className="invalid-feedback">{errors.username}</div></div>
+            <div className="mb-4"><label className="form-label fw-semibold" htmlFor="password">Password</label><input id="password" name="password" type="password" value={form.password} onChange={handleChange} className={`form-control form-control-lg ${errors.password ? 'is-invalid' : ''}`} autoComplete="current-password" /><div className="invalid-feedback">{errors.password}</div></div>
+            <button className="btn btn-primary btn-lg w-100 auth-submit" type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign in'}</button>
+        </form>
+        <p className="text-center text-secondary mt-4 mb-0">New here? <Link className="fw-semibold text-decoration-none" to="/signup">Create an account</Link></p>
+    </section></main>;
 };
-const styles={
-    container : { display:'flex', justifyContent:'center', alignItems:'center', height:'100vh', backgroundColor:'#f0f2f5' },
-    box       : { background:'white', padding:'40px', borderRadius:'10px', width:'350px', boxShadow:'0 2px 10px rgba(0,0,0,0.1)' },
-    title     : { textAlign:'center', color:'#1890ff', marginBottom:'5px' },
-    subtitle  : { textAlign:'center', color:'#666', marginBottom:'20px' },
-    input     : { width:'100%', padding:'10px', marginBottom:'15px', borderRadius:'5px', border:'1px solid #ddd', fontSize:'14px', boxSizing:'border-box' },
-    button    : { width:'100%', padding:'10px', backgroundColor:'#1890ff', color:'white', border:'none', borderRadius:'5px', fontSize:'16px', cursor:'pointer' },
-    error     : { color:'red', textAlign:'center', marginBottom:'10px' },
-    signupText : { textAlign:'center', color:'#666', fontSize:'14px', marginTop:'15px' },
-    link       : { color:'#1890ff', textDecoration:'none' },
-    logoContainer : { display:'flex', justifyContent:'center', marginBottom:'10px' },
-    logoImg       : { width:'80px', height:'80px', borderRadius:'15px', objectFit:'cover' },
-};
+
 export default Login;

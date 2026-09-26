@@ -1,1 +1,1 @@
-from .leave_model import Leave
+from .leave_model import EmployeeProfile, Leave

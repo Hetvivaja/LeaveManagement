@@ -2,7 +2,6 @@ import React from 'react';
 
 const LeaveStatusTracker = ({ leaves }) => {
 
-    // Sirf last 3 leaves dikhao
     const recentLeaves = [...leaves]
         .sort((a, b) => new Date(b.applied_on) - new Date(a.applied_on))
         .slice(0, 3);
@@ -24,9 +23,8 @@ const LeaveStatusTracker = ({ leaves }) => {
                 {recentLeaves.map((leave) => {
                     const config = statusConfig[leave.status];
                     return (
-                        <div key={leave.id} style={styles.item}>
+                        <div key={leave.id} style={styles.item} className="status-item">
 
-                            {/* Left Side */}
                             <div style={styles.left}>
                                 <span style={styles.icon}>{config.icon}</span>
                                 <div>
@@ -40,7 +38,6 @@ const LeaveStatusTracker = ({ leaves }) => {
                                 </div>
                             </div>
 
-                            {/* Right Side */}
                             <div style={{
                                 ...styles.statusBadge,
                                 background: config.color

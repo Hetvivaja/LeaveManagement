@@ -8,14 +8,17 @@ const Navbar=({user})=>{
 
     const handleLogout=async()=>{
         const refresh_token =localStorage.getItem('refresh_token');
-        await logoutAPI({refresh_token });
-        localStorage.clear();
-        navigate('/');
+        try {
+            if (refresh_token) await logoutAPI({refresh_token });
+        } finally {
+            localStorage.clear();
+            navigate('/');
+        }
     };
     
     return(
-        <nav style={styles.nav}>
-             <div style={styles.logoContainer}>
+        <nav style={styles.nav} className="app-navbar">
+             <div style={styles.logoContainer} className="navbar-brand">
                 <img
                     src="/hetvi_logo.png"  
                     alt="Logo"
@@ -23,7 +26,7 @@ const Navbar=({user})=>{
                 />
                 <h2 style={styles.logoText}>🏢Leave Management</h2>
             </div>
-            <div style={styles.right}>
+            <div style={styles.right} className="navbar-actions">
                 <span style={styles.username}>👤 {user?.username}</span>
                 <button style={styles.logoutBtn} onClick={handleLogout}>Logout</button>
             </div>

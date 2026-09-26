@@ -3,7 +3,6 @@ from leave.models import Leave
 
 class LeaveSerializer(serializers.ModelSerializer):
 
-    #To Show to help Employee Name's
     employee_name=serializers.SerializerMethodField()
 
     class Meta:

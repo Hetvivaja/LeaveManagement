@@ -18,7 +18,7 @@ const LeaveBalance = ({ leaves }) => {
     return (
         <div style={styles.container}>
             <h3 style={styles.title}>🗓️ Leave Balance</h3>
-            <div style={styles.cards}>
+            <div style={styles.cards} className="balance-grid">
                 {Object.entries(LEAVE_LIMITS).map(([type, total]) => {
                     const used    = getUsed(type);
                     const balance = total - used;
@@ -36,7 +36,6 @@ const LeaveBalance = ({ leaves }) => {
                                 </span>
                             </div>
 
-                            {/* Progress Bar */}
                             <div style={styles.progressBg}>
                                 <div style={{
                                     ...styles.progressFill,
